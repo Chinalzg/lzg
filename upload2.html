@@ -1,0 +1,77 @@
+
+<input id="f" class="" type="file" name="file" onchange="upFile()">
+
+
+</body>
+<script>
+var upFile = function () {
+    var file = document.getElementById('f');
+    var f = file.files[0];
+    //alert(f.name);
+    var totalSize = f.size;
+    var len = 2 * 1024 * 1024;
+    var tota_temp = Math.ceil(totalSize / len);
+    var start = 0;
+    var end = start + len;
+    var index = 1;
+    
+var blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice;
+
+var fileReader = new FileReader();
+    function sliceandpost()
+    {
+        
+            if (start >= totalSize)return;
+            //if (index >= tota_temp)return;
+            
+            
+            var temp = f.slice(start, end);
+            var formData = new FormData();
+                formData.append('file', temp);
+                formData.append('fileName', f.name);
+                formData.append('index', index);
+                formData.append('start', start);
+                formData.append('end', end);
+                formData.append('totalSize', totalSize);
+                formData.append('tota_temp', tota_temp);
+                var url = 'upload2.php';
+                xhr = new XMLHttpRequest();
+                xhr.onreadystatechange=onchange;
+                xhr.open('POST', url);
+                xhr.send(formData);
+                
+            function onchange()
+            {
+                // 4 = "loaded"
+                if(xhr.readyState==4){
+                    // 200 = "OK"
+                    if(xhr.status==200){
+                        //var headers =  JSON.parse(xhr.responseText);
+                        var headers =  JSON.parse(xhr.response);
+                            console.log(len);
+                        //分片上传成功
+                        if(headers.temp==0){
+                            index = index + 1;
+                            // 改变下一次截取的位置
+                            start = end;
+                            end = start + len;
+                            // 因为截取可能超过totalSize，判断最后一次截取是否大于totalSize如果大于就直接让end等于totalSize
+                            if (end > totalSize) {
+                                end = totalSize;
+                            }
+                            sliceandpost();
+                            
+                        }
+                        
+                    }else{
+                        alert("Problem retrieving XML data:" + xhr.statusText);
+                    }
+                    
+                }
+            }   
+    }
+    sliceandpost();
+        
+}
+</script>
+</html>
