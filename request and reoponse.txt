@@ -1,0 +1,62 @@
+(1)text/plain
+
+       服务器端：
+
+              header('Content-Type: text/plain');
+
+
+       客户端：
+
+              if(xhr.responseText==='succ'){ ... }
+
+  (2)text/html
+
+       服务器端：
+
+              header('Content-Type: text/html');
+
+              echo "<tr><td>$data</td></tr>";
+
+       客户端：
+
+              tbody.innerHTML = xhr.responseText
+
+  (3)application/javascript
+
+       服务器端：
+
+              header('Content-Type: application/javascript');
+
+              echo "alert($data); f1(); f2($data)";
+
+       客户端：
+
+              eval( xhr.responseText )
+
+  (4)application/xml
+
+       服务器端：
+
+              header('Content-Type: application/xml');
+
+              echo "<bookList><book>$b</book></bookList>";
+
+       客户端：
+
+              var document = xhr.responseXML
+
+  (5)application/json
+
+       服务器端：
+
+              header('Content-Type: application/json');
+
+              //echo "[ {"bname":"","price":35.5},{} ]";
+
+              $list = ...;
+
+              echo json_encode($list);
+
+       客户端：
+
+              var obj = JSON.parse( xhr.responseText )
